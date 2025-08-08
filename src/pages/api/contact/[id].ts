@@ -13,7 +13,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return getByIdContacts(req, res);
     case "DELETE":
       return deleteContacts(req, res);
-    case "PATCH":
+    case "PUT":
       return updateContacts(req, res);
     default:
       res.setHeader("Allow", ["GET", "DELETE", "PATCH"]);

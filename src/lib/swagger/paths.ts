@@ -77,7 +77,7 @@ export const swaggerPaths: OpenAPIV3.PathsObject = {
       },
     },
 
-    patch: {
+    put: {
       summary: "Update contact by ID",
       parameters: [
         {

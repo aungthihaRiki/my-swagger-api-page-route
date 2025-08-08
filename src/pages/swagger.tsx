@@ -3,7 +3,7 @@ import SwaggerUI from "swagger-ui-react";
 
 export default function SwaggerPage({ spec }: { spec: any }) {
   return (
-    <div className="bg-white text-black">
+    <div className="">
       <SwaggerUI spec={spec} />
     </div>
   );
