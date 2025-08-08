@@ -1,8 +1,13 @@
-// import { NextResponse } from "next/server";
+import { cors } from "@/lib/cors";
+import { initMiddleware } from "@/lib/init-middleware";
 import { prisma } from "@/lib/prisma";
 import { NextApiRequest, NextApiResponse } from "next";
 
+const runCors = initMiddleware(cors);
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  await runCors(req, res);
+
   switch (req.method) {
     case "GET":
       return getByIdContacts(req, res);

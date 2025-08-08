@@ -1,8 +1,11 @@
 import { prisma } from '@/lib/prisma';
-// import { NextResponse } from 'next/server';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { initMiddleware } from '@/lib/init-middleware';
+import { cors } from '@/lib/cors';
+const runCors = initMiddleware(cors);
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  await runCors(req, res);
   switch (req.method) {
     case "GET":
       return getHello(req, res);
