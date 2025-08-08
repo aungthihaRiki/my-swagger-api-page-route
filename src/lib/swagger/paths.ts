@@ -24,6 +24,8 @@ export const swaggerPaths = {
       },
       responses: {
         201: { description: "Contact created successfully" },
+        400: { description: "Bad request" },
+        500: { description: "Server error" },
       },
     },
   },

@@ -22,7 +22,7 @@ export async function getContacts(req: NextApiRequest, res: NextApiResponse) {
 export async function postContact(req: NextApiRequest, res: NextApiResponse) {
   // res.status(201).json({ message: "Contact created" });
   try {
-    const { firstName, lastName, phone, email } = await req.body();
+    const { firstName, lastName, phone, email } = req.body;
     console.log(" contact body", req.body );
     console.log({ firstName, lastName, phone, email });
 

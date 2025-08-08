@@ -57,7 +57,7 @@ export async function updateContacts(
 ) {
   const { id } = req.query;
   try {
-    const { firstName, lastName, phone, email } = await req.body;
+    const { firstName, lastName, phone, email } = req.body;
     const contact = await prisma.contact.update({
       where: { id: id as string },
       data: { firstName, lastName, phone, email },
