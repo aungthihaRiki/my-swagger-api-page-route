@@ -1,30 +1,72 @@
-import { NextResponse } from "next/server";
+// import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { NextApiRequest, NextApiResponse } from "next";
 
-export async function GET() {
-  const contacts = await prisma.contact.findMany();
-  return NextResponse.json(contacts);
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  switch (req.method) {
+    case "GET":
+      return getByIdContacts(req, res);
+    case "DELETE":
+      return deleteContacts(req, res);
+    case "PATCH":
+      return updateContacts(req, res);
+    default:
+      res.setHeader("Allow", ["GET", "DELETE", "PATCH"]);
+      return res.status(405).end(`Method ${req.method} Not Allowed`);
+  }
 }
 
-export async function POST(req: Request) {
+export async function getByIdContacts(
+  req: NextApiRequest, res: NextApiResponse
+) {
+  const { id } = req.query;
   try {
-    const { firstName, lastName, phone, email } = await req.json();
-    console.log(" contact data");
-    console.log({ firstName, lastName, phone, email });
-    if (!firstName || !lastName || !phone || !email) {
-      return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 400 }
-      );
+    console.log("Searching for:", id);
+    const contact = await prisma.contact.findUnique({
+      where: { id: id as string },
+    });
+
+    if (!contact) {
+      return res.status(404).json({ error: "Contact not found" });
     }
-    const contact = await prisma.contact.create({
+    return res.status(200).json(contact);
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+}
+
+export async function deleteContacts(
+  req: NextApiRequest, res: NextApiResponse
+) {
+  const { id } = req.query;
+  try {
+    console.log("Delete for:", id);
+    const contact = await prisma.contact.delete({ where: { id: id as string } });
+
+    if (!contact) {
+      return res.status(404).json({ error: "Contact not found" });
+    }
+    return res.status(200).json(contact);
+  } catch (err: any) {
+     return res.status(500).json({ error: err.message });
+  }
+}
+
+export async function updateContacts(
+  req: NextApiRequest, res: NextApiResponse
+) {
+  const { id } = req.query;
+  try {
+    const { firstName, lastName, phone, email } = await req.body;
+    const contact = await prisma.contact.update({
+      where: { id: id as string },
       data: { firstName, lastName, phone, email },
     });
-    return NextResponse.json(contact, { status: 201 });
+    if (!contact) {
+      return res.status(404).json({ error: "Contact not found" });
+    }
+    return res.status(200).json(contact);
   } catch (err: any) {
-    return NextResponse.json(
-      { error: "Server error", details: err.message },
-      { status: 500 }
-    );
+    return res.status(500).json({ error: err.message });
   }
 }

@@ -1,8 +1,8 @@
-import swaggerJsdoc from 'swagger-jsdoc';
 import { swaggerPaths } from './paths';
 import { swaggerComponents } from './components';
+import { Options } from "swagger-jsdoc";
 
-const options = {
+export const swaggerOptions: Options = {
   definition: {
     openapi: '3.0.0',
     info: {
@@ -17,7 +17,7 @@ const options = {
     components: swaggerComponents,
     paths: swaggerPaths,
   },
-  apis: ['./src/app/api/**/*.ts'], // API files with Swagger comments
+  apis: ['./src/pages/api/**/*.ts'], // API files with Swagger comments
 };
 
-export const swaggerSpec = swaggerJsdoc(options);
+// export const swaggerSpec = swaggerJsdoc(swaggerOptions);

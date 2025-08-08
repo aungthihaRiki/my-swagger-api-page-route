@@ -1,53 +1,51 @@
-import { NextResponse } from "next/server";
+// import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { NextApiRequest, NextApiResponse } from "next";
 
-export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  switch (req.method) {
+    case "GET":
+      return getContacts(req, res);
+    case "POST":
+      return postContact(req, res);
+    default:
+      res.setHeader("Allow", ["GET", "POST"]);
+      return res.status(405).end(`Method ${req.method} Not Allowed`);
+  }
+}
+
+export async function getContacts(req: NextApiRequest, res: NextApiResponse) {
+  const contacts = await prisma.contact.findMany();
+  return res.status(200).json(contacts);
+}
+
+export async function postContact(req: NextApiRequest, res: NextApiResponse) {
+  // res.status(201).json({ message: "Contact created" });
   try {
-    const { id } = params;
-    console.log("Searching for:", id);
-    const contact = await prisma.contact.findUnique({
-      where: { id },
-    });
+    const { firstName, lastName, phone, email } = await req.body();
+    console.log(" contact body", req.body );
+    console.log({ firstName, lastName, phone, email });
 
-    if (!contact) {
-      return NextResponse.json({ error: "Contact not found" }, { status: 404 });
+    if (!firstName || !lastName || !phone || !email) {
+      return res.status(400).json(
+        { error: "Missing required fields" }
+      );
     }
-    return NextResponse.json(contact, { status: 200 });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
-  }
-}
 
-export async function DELETE(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const { id } = params;
-    console.log("Delete for:", id);
-    const contact = await prisma.contact.delete({ where: { id } });
-    return NextResponse.json(contact, { status: 200 });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
-  }
-}
-
-export async function PATCH(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const { id } = params;
-    const { firstName, lastName, phone, email } = await req.json();
-    const contact = await prisma.contact.update({
-      where: { id },
+    const contact = await prisma.contact.create({
       data: { firstName, lastName, phone, email },
     });
-    return NextResponse.json(contact, { status: 200 });
+    console.log(contact)
+    if (!contact) {
+      return res.status(404).json(
+        { error: "Contact Failed to be created" }
+      );
+    }
+
+    return res.status(201).json(contact);
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return res.status(500).json(
+      { error: "Server error", details: err.message }
+    );
   }
 }
