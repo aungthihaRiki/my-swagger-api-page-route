@@ -1,14 +1,13 @@
 import Cors from "cors";
 
 const allowedOrigins = [
-  // "*", Allow all origins
   "http://localhost:3000",
-  "https://my-swagger-api-page-route.vercel.app/",  // production url
+  "https://my-swagger-api-page-route.vercel.app",
 ];
 
 export const cors = Cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin || allowedOrigins.includes(origin.replace(/\/$/, ''))) {
       callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS"));

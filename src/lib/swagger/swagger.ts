@@ -10,9 +10,9 @@ export const swaggerOptions: Options = {
       version: "1.1.1",
     },
     servers: [
-      { url: "http://localhost:3000", description: "Local dev" },
+      { url: "http://localhost:3000/", description: "Local dev" },
       {
-        url: "https://my-swagger-api-page-route.vercel.app",
+        url: "https://my-swagger-api-page-route.vercel.app/",
         description: "Production",
       },
     ],
@@ -23,3 +23,5 @@ export const swaggerOptions: Options = {
 };
 
 // export const swaggerSpec = swaggerJsdoc(swaggerOptions);
+
+
