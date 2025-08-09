@@ -58,14 +58,18 @@ export async function deleteContacts(
   const { id } = req.query;
   try {
     console.log("Delete for:", id);
-    const contact = await prisma.contact.delete({
+    const existing = await prisma.contact.findUnique({
       where: { id: id as string },
     });
 
-    if (!contact) {
+    if (!existing) {
       return res.status(404).json({ error: "Contact not found" });
     }
-    return res.status(200).json(contact);
+
+    await prisma.contact.delete({ where: { id: id as string } });
+
+
+    return res.status(200).json({ message: "Contact deleted successfully" });
   } catch (err: any) {
     return res.status(500).json({ error: err.message });
   }
