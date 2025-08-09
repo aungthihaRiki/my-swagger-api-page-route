@@ -66,6 +66,7 @@ export const swaggerPaths: OpenAPIV3.PathsObject = {
     post: {
       summary: "Create a new contact",
       tags: ["Contact"],
+      security: [{ bearerAuth: [] }],
       requestBody: {
         required: true,
         content: {
@@ -77,6 +78,8 @@ export const swaggerPaths: OpenAPIV3.PathsObject = {
       responses: {
         201: { description: "Contact created successfully" },
         400: { description: "Bad request" },
+        401: { description: "Unauthorized" },
+        403: { description: "Forbidden" },
         500: { description: "Server error" },
       },
     },
@@ -86,6 +89,7 @@ export const swaggerPaths: OpenAPIV3.PathsObject = {
     get: {
       summary: "Get contact by ID",
       tags: ["Contact"],
+      security: [{ bearerAuth: [] }],
       parameters: [
         {
           name: "id",
@@ -110,6 +114,7 @@ export const swaggerPaths: OpenAPIV3.PathsObject = {
     delete: {
       summary: "Delete contact by ID",
       tags: ["Contact"],
+      security: [{ bearerAuth: [] }],
       parameters: [
         {
           name: "id",
@@ -120,6 +125,8 @@ export const swaggerPaths: OpenAPIV3.PathsObject = {
       ],
       responses: {
         200: { description: "Contact deleted" },
+        401: { description: "Unauthorized" },
+        403: { description: "Forbidden" },
         404: { description: "Not found" },
       },
     },
@@ -127,6 +134,7 @@ export const swaggerPaths: OpenAPIV3.PathsObject = {
     put: {
       summary: "Update contact by ID",
       tags: ["Contact"],
+      security: [{ bearerAuth: [] }],
       parameters: [
         {
           name: "id",
@@ -145,6 +153,8 @@ export const swaggerPaths: OpenAPIV3.PathsObject = {
       },
       responses: {
         200: { description: "Contact updated" },
+        401: { description: "Unauthorized" },
+        403: { description: "Forbidden" },
         404: { description: "Not found" },
       },
     },

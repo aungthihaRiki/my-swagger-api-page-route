@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { initMiddleware } from "@/lib/init-middleware";
 import { cors } from "@/lib/cors";
 import { verifyToken } from "../middleware/verifyToken";
+import { UserRole } from "@prisma/client";
 
 const runCors = initMiddleware(cors);
 
@@ -25,10 +26,9 @@ export default async function handler(
 
 export async function getContacts(req: NextApiRequest, res: NextApiResponse) {
   const decodedToken = verifyToken(req);
-  console.log("decodedToken",decodedToken);
-  if (!decodedToken) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
+  console.log("decodedToken", decodedToken);
+
+  if (!decodedToken) return res.status(401).json({ message: "Unauthorized" });  // check authentication
 
   try {
     const contacts = await prisma.contact.findMany();
@@ -43,7 +43,12 @@ export async function getContacts(req: NextApiRequest, res: NextApiResponse) {
 }
 
 export async function postContact(req: NextApiRequest, res: NextApiResponse) {
-  // res.status(201).json({ message: "Contact created" });
+  const decodedToken = verifyToken(req);
+  console.log("decodedToken", decodedToken);
+
+  if (!decodedToken) return res.status(401).json({ message: "Unauthorized" });  // check authentication
+  if (decodedToken.role !== UserRole.ADMIN) return res.status(403).json({ message: "Forbidden" });  // check user role
+
   try {
     const { firstName, lastName, phone, email } = req.body;
     console.log(" contact body", req.body);
@@ -56,12 +61,12 @@ export async function postContact(req: NextApiRequest, res: NextApiResponse) {
     const contact = await prisma.contact.create({
       data: { firstName, lastName, phone, email },
     });
-    console.log(contact);
+    console.log("new Contact", contact);
     if (!contact) {
       return res.status(404).json({ error: "Contact Failed to be created" });
     }
 
-    return res.status(201).json(contact);
+    return res.status(201).json({ message: "Contact created successfully", contact});
   } catch (err: any) {
     return res
       .status(500)
