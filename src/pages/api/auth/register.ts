@@ -3,10 +3,10 @@ import { prisma } from "@/lib/prisma";
 import { initMiddleware } from "@/lib/init-middleware";
 import { cors } from "@/lib/cors";
 import {
-  type RegisterUserInput,
+  RegisterUserInput,
   RegisterUserSchema,
 } from "@/lib/schema/register.schema";
-import { getUserByPhone } from "./utils/getUserByPhone";
+import { getUserByEmail, getUserByPhone } from "./utils/user";
 import { validateRequest } from "./utils/validateRequest";
 import { saltAndHashPassword } from "./utils/hashed";
 
@@ -40,9 +40,9 @@ async function userRegister(req: NextApiRequest, res: NextApiResponse) {
 
     const userData: RegisterUserInput = validation.data;
 
-    const existingUser = await getUserByPhone(userData.phone);
-    if (existingUser)
-      return res.status(200).json({ message: "User already exists." });
+    const existingUserByPhone = await getUserByPhone(userData.phone);
+    const existingUserByEmail = await getUserByEmail(userData.phone);
+    if (existingUserByEmail || existingUserByPhone) return res.status(409).json({ message: "User already exists." });
 
     const passwordHash = await saltAndHashPassword(userData.password);
 

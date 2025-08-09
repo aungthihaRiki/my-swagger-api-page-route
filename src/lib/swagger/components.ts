@@ -33,5 +33,13 @@ export const swaggerComponents: OpenAPIV3.ComponentsObject = {
       },
       required: ["name", "email", "phone", "password"],
     },
+    LoginUserInput: {
+      type: "object",
+      properties: {
+        phone: { type: "string" },
+        password: { type: "string" },
+      },
+      required: ["phone", "password"],
+    },
   },
 };
