@@ -4,6 +4,7 @@ export const swaggerPaths: OpenAPIV3.PathsObject = {
   "/api/contact": {
     get: {
       summary: "Get all contacts",
+      tags: ["Contact"],
       responses: {
         200: {
           description: "List of contacts",
@@ -21,6 +22,7 @@ export const swaggerPaths: OpenAPIV3.PathsObject = {
     },
     post: {
       summary: "Create a new contact",
+      tags: ["Contact"],
       requestBody: {
         required: true,
         content: {
@@ -40,6 +42,7 @@ export const swaggerPaths: OpenAPIV3.PathsObject = {
   "/api/contact/{id}": {
     get: {
       summary: "Get contact by ID",
+      tags: ["Contact"],
       parameters: [
         {
           name: "id",
@@ -63,6 +66,7 @@ export const swaggerPaths: OpenAPIV3.PathsObject = {
 
     delete: {
       summary: "Delete contact by ID",
+      tags: ["Contact"],
       parameters: [
         {
           name: "id",
@@ -79,6 +83,7 @@ export const swaggerPaths: OpenAPIV3.PathsObject = {
 
     put: {
       summary: "Update contact by ID",
+      tags: ["Contact"],
       parameters: [
         {
           name: "id",
@@ -98,6 +103,25 @@ export const swaggerPaths: OpenAPIV3.PathsObject = {
       responses: {
         200: { description: "Contact updated" },
         404: { description: "Not found" },
+      },
+    },
+  },
+  "/api/auth/register": {
+    post: {
+      summary: "Register a new user",
+      tags: ["Auth"],
+      requestBody: {
+        required: true,
+        content: {
+          "application/json": {
+            schema: { $ref: "#/components/schemas/RegisterUserInput" },
+          },
+        },
+      },
+      responses: {
+        201: { description: "User registered successfully" },
+        400: { description: "Bad request" },
+        500: { description: "Server error" },
       },
     },
   },

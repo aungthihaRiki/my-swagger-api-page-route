@@ -1,0 +1,64 @@
+import { NextApiRequest, NextApiResponse } from "next";
+import { prisma } from "@/lib/prisma";
+import { initMiddleware } from "@/lib/init-middleware";
+import { cors } from "@/lib/cors";
+import {
+  type RegisterUserInput,
+  RegisterUserSchema,
+} from "@/lib/schema/register.schema";
+import { getUserByPhone } from "./utils/getUserByPhone";
+import { validateRequest } from "./utils/validateRequest";
+import { saltAndHashPassword } from "./utils/hashed";
+
+const runCors = initMiddleware(cors);
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  await runCors(req, res);
+
+  switch (req.method) {
+    case "POST":
+      return userRegister(req, res);
+    default:
+      res.setHeader("Allow", ["GET", "POST"]);
+      return res.status(405).end(`Method ${req.method} Not Allowed`);
+  }
+}
+
+async function userRegister(req: NextApiRequest, res: NextApiResponse) {
+  try {
+    const validation = validateRequest(RegisterUserSchema, req.body);
+
+    if (!validation.success) {
+      return res.status(400).json({
+        message: "Validation Errors",
+        errors: validation.errors,
+      });
+    }
+
+    const userData: RegisterUserInput = validation.data;
+
+    const existingUser = await getUserByPhone(userData.phone);
+    if (existingUser)
+      return res.status(200).json({ message: "User already exists." });
+
+    const passwordHash = await saltAndHashPassword(userData.password);
+
+    const newUser = await prisma.user.create({
+      data: {
+        name: userData.name,
+        email: userData.email,
+        phone: userData.phone,
+        password: passwordHash,
+      },
+    });
+
+    return res
+      .status(200)
+      .json({ message: "User is registered successfully", user: newUser });
+  } catch (err: any) {
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+}
