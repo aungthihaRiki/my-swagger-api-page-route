@@ -46,6 +46,7 @@ export const swaggerPaths: OpenAPIV3.PathsObject = {
     get: {
       summary: "Get all contacts",
       tags: ["Contact"],
+      security: [{ bearerAuth: [] }],
       responses: {
         200: {
           description: "List of contacts",
@@ -58,6 +59,7 @@ export const swaggerPaths: OpenAPIV3.PathsObject = {
             },
           },
         },
+        401: { description: "Unauthorized" },
         404: { description: "Contact not found" },
       },
     },

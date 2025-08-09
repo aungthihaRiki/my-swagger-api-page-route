@@ -17,6 +17,7 @@ export const swaggerOptions: Options = {
       },
     ],
     components: swaggerComponents,
+    // security: [{ bearerAuth: [] }],
     paths: swaggerPaths,
   },
   apis: ["./src/pages/api/**/*.ts"], // API files with Swagger comments

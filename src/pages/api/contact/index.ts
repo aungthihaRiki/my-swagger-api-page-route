@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { NextApiRequest, NextApiResponse } from "next";
 import { initMiddleware } from "@/lib/init-middleware";
 import { cors } from "@/lib/cors";
+import { verifyToken } from "../middleware/verifyToken";
 
 const runCors = initMiddleware(cors);
 
@@ -23,6 +24,12 @@ export default async function handler(
 }
 
 export async function getContacts(req: NextApiRequest, res: NextApiResponse) {
+  const decodedToken = verifyToken(req);
+  console.log("decodedToken",decodedToken);
+  if (!decodedToken) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
   try {
     const contacts = await prisma.contact.findMany();
     if (contacts.length === 0) {

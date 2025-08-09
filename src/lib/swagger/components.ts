@@ -1,6 +1,13 @@
 import { OpenAPIV3 } from 'openapi-types';
 
 export const swaggerComponents: OpenAPIV3.ComponentsObject = {
+  securitySchemes: {
+    bearerAuth: {
+      type: "http",
+      scheme: "bearer",
+      bearerFormat: "JWT",
+    },
+  },
   schemas: {
     Contact: {
       type: "object",

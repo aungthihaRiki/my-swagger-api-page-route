@@ -52,7 +52,7 @@ export const userLogin = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const token = createJwtToken(
       existingUserByPhone.id,
-      existingUserByPhone.email,
+      existingUserByPhone.phone,
       existingUserByPhone.role
     );
 
